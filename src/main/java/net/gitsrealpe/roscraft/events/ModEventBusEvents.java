@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 
 // warning advices to remove bus, will no longer be needed
-@EventBusSubscriber(modid = ROScraft.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ROScraft.MODID)
 public class ModEventBusEvents {
 
     @SubscribeEvent
