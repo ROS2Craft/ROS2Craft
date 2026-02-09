@@ -7,6 +7,7 @@ import net.gitsrealpe.roscraft.entity.custom.TurtlebotEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -45,7 +46,8 @@ public class TurtlebotItem extends Item {
                 return InteractionResult.FAIL;
             }
 
-            turtlebot.moveTo(turtlebot.getX(), turtlebot.getY(), turtlebot.getZ(), 0.0F, 0.0F);
+            float f = (float) Mth.floor((Mth.wrapDegrees(context.getRotation() - 180.0F) + 22.5F) / 45.0F) * 45.0F;
+            turtlebot.moveTo(turtlebot.getX(), turtlebot.getY(), turtlebot.getZ(), f, 0.0F);
             serverLevel.addFreshEntityWithPassengers(turtlebot);
             turtlebot.playSound(SoundEvents.SMITHING_TABLE_USE, 0.9f, 1.3f);
             turtlebot.gameEvent(GameEvent.ENTITY_PLACE, context.getPlayer());

@@ -30,6 +30,16 @@ public class TurtlebotEntity extends LivingEntity {
     public void tick() {
         super.tick();
     @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return SoundEvents.CREEPER_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.CREEPER_DEATH;
+    }
+
+    @Override
     public Iterable<ItemStack> getArmorSlots() {
         return NonNullList.withSize(4, ItemStack.EMPTY);
     }
