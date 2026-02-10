@@ -16,7 +16,8 @@ public class ModEntities {
 
     public static final Supplier<EntityType<TurtlebotEntity>> TURTLEBOT = ENTITY_TYPES.register("turtlebot",
             () -> EntityType.Builder.of(TurtlebotEntity::new, MobCategory.MISC)
-                    .sized(1.0f, 1.0f)
+                    .sized(.75f, .375f)
+                    .eyeHeight(.34375f)
                     .build("turtlebot"));
 
     public static void register(IEventBus eventBus) {
