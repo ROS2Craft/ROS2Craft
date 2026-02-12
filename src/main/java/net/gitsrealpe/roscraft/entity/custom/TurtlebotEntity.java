@@ -22,16 +22,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class TurtlebotEntity extends Robot {
 
     // local vars
-    int ticker = 0;
     // server vars
-    // private UUID uuid; server already gives uuid to each entity, no need to
-    // create another one
     float x_vel = 0;
     float w_vel = 0;
 
     public TurtlebotEntity(EntityType<? extends TurtlebotEntity> entityType, Level level) {
         super(entityType, level);
-        this.robotName = "turtlebot";
 
         if (!level.isClientSide()) {
             // this.entityData.set(NAME, generateDefaultDisplayId());
@@ -66,35 +62,33 @@ public class TurtlebotEntity extends Robot {
     @Override
     public void tick() {
         super.tick();
-        // String side = (this.level().isClientSide()) ? "client" : "server";
-        // System.out.println(side + this.getId());
-
-        if (level().isClientSide) {
-
-        }
 
         if (!this.level().isClientSide() && this.isAlive()) {
-            float new_rot = this.getYHeadRot() + (this.w_vel * 180.0f / Mth.PI / 20.0f);
-            // wrap angle without mod
-            if (new_rot >= 180.0F) {
-                new_rot -= 360.0F;
-            }
-            if (new_rot < -180.0F) {
-                new_rot += 360.0F;
-            }
-            // new_rot = Mth.wrapDegrees(new_rot);
-            this.setYHeadRot(new_rot);
-            // this.setYBodyRot(new_rot);
-            // this.yBodyRotO = this.yRotO = rotation;
-            // this.yHeadRotO = this.yHeadRot = rotation;
-            float yaw = (float) Math.toRadians(this.getYHeadRot());
-            // System.out.println("yaw: " + yaw);
-            // System.out.println("vel x: " + this.x_vel * -Math.sin(yaw));
-            // System.out.println("vel z: " + this.x_vel * Math.cos(yaw));
+
+            // 1. Apply angular velocity to body yaw (this is what should turn the robot)
+            float yawIncrementDeg = this.w_vel * (180.0f / (float) Math.PI) / 20.0f; // rad/s → deg/tick
+
+            float currentBodyYaw = this.getYRot(); // or this.yBodyRot if you prefer
+            float newBodyYaw = currentBodyYaw + yawIncrementDeg;
+
+            // Wrap to [-180, 180) or [0, 360) — both work
+            newBodyYaw = Mth.wrapDegrees(newBodyYaw);
+            // 2. Apply to both body and head (so head follows body)
+            this.setYRot(newBodyYaw); // main entity yaw
+            this.yBodyRot = newBodyYaw;
+            this.yHeadRot = newBodyYaw; // head follows body exactly
+            // Optional: smooth previous values so render doesn't jitter
+            this.yRotO = this.yRotO + yawIncrementDeg;
+            this.yBodyRotO = this.yBodyRotO + yawIncrementDeg;
+            this.yHeadRotO = this.yHeadRotO + yawIncrementDeg;
+            // 3. Now use the final (wrapped) yaw for movement direction
+            float yawRad = (float) Math.toRadians(this.getYRot()); // or newBodyYaw
+
             this.setDeltaMovement(new Vec3(
-                    this.x_vel * -Math.sin(yaw),
+                    this.x_vel * -Math.sin(yawRad),
                     this.getDeltaMovement().y,
-                    this.x_vel * Math.cos(yaw)));
+                    this.x_vel * Math.cos(yawRad)));
+
             this.hasImpulse = true;
         }
     }
@@ -111,7 +105,7 @@ public class TurtlebotEntity extends Robot {
         super.die(damageSource);
         this.x_vel = 0.0f;
         this.w_vel = 0.0f;
-        this.cleanup();
+        this.cleanup(true);
     }
 
     @Override
