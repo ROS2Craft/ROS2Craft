@@ -45,6 +45,20 @@ public abstract class Robot extends LivingEntity {
     protected abstract void twistCallback(Message message);
 
     @Override
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
+
+        if (!level().isClientSide() && this.robotName.equals("robot")) {
+            this.robotName = "robot" + getId();
+            entityData.set(ROBOT_NAME, this.robotName);
+        }
+        if (level().isClientSide()) {
+            ros = ROSManager.getInstance().getRosConnection();
+            rosRegistered = true;
+        }
+    }
+
+    @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         // initialize with default value
@@ -69,20 +83,6 @@ public abstract class Robot extends LivingEntity {
             this.twistSubscriber = new Topic(ros, "/" + this.robotName + "/cmd_vel",
                     "geometry_msgs/Twist");
             this.twistSubscriber.subscribe(this::twistCallback);
-        }
-    }
-
-    @Override
-    public void onAddedToLevel() {
-        super.onAddedToLevel();
-
-        if (!level().isClientSide() && this.robotName.equals("robot")) {
-            this.robotName = "robot" + getId();
-            entityData.set(ROBOT_NAME, this.robotName);
-        }
-        if (level().isClientSide()) {
-            ros = ROSManager.getInstance().getRosConnection();
-            rosRegistered = true;
         }
     }
 
