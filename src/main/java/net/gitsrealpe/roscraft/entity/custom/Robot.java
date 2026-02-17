@@ -8,6 +8,7 @@ import edu.wpi.rail.jrosbridge.Topic;
 import edu.wpi.rail.jrosbridge.messages.Message;
 import net.gitsrealpe.roscraft.ROScraft;
 import net.gitsrealpe.roscraft.ros.ROSManager;
+import net.gitsrealpe.roscraft.sensors.Lidar;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -32,6 +33,8 @@ public abstract class Robot extends LivingEntity {
     private boolean rosRegistered = false;
     Ros ros;
 
+    Lidar lidar;
+
     protected Robot(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
         // constructor -> initializa data with default values, see livingentity
@@ -39,6 +42,8 @@ public abstract class Robot extends LivingEntity {
         this.robotName = "robot";
         if (level.isClientSide()) {
             ROScraft.LOGGER.info("name at constructor " + this.robotName);
+            lidar = new Lidar(this, 3, 3.1416f, 12.8f);
+
         }
     }
 
@@ -118,6 +123,8 @@ public abstract class Robot extends LivingEntity {
                     .build();
             Message toSend = new Message(rawData, "geometry_msgs/Vector3Stamped");
             rawPublisher.publish(toSend);
+
+            this.lidar.captureDepth(this);
         }
     }
 
