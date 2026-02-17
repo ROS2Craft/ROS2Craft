@@ -105,7 +105,7 @@ public class TurtlebotEntity extends Robot {
         super.die(damageSource);
         this.x_vel = 0.0f;
         this.w_vel = 0.0f;
-        this.cleanup(true);
+        this.removeFromROS(true);
     }
 
     @Override

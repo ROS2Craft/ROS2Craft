@@ -4,8 +4,11 @@ import javax.json.Json;
 import javax.json.JsonObject;
 
 import edu.wpi.rail.jrosbridge.Ros;
+import edu.wpi.rail.jrosbridge.Service;
 import edu.wpi.rail.jrosbridge.Topic;
 import edu.wpi.rail.jrosbridge.messages.Message;
+import edu.wpi.rail.jrosbridge.services.ServiceRequest;
+import edu.wpi.rail.jrosbridge.services.ServiceResponse;
 import net.gitsrealpe.roscraft.ROScraft;
 import net.gitsrealpe.roscraft.ros.ROSManager;
 import net.gitsrealpe.roscraft.sensors.Lidar;
@@ -109,16 +112,7 @@ public abstract class Robot extends LivingEntity {
             // // removeFromROS(false);
             ROScraft.LOGGER.info("synced name data " + this.entityData.get(ROBOT_NAME));
             this.robotName = this.entityData.get(ROBOT_NAME);
-            this.setCustomName(Component.literal(this.robotName));
-            ROScraft.LOGGER.info(this.robotName);
-            cleanup(false);
-            // publishers
-            this.rawPublisher = new Topic(ros, "/" + this.robotName + "/rawData",
-                    "roscraft_msgs/MCRawRobotData");
-            // subscribers
-            this.twistSubscriber = new Topic(ros, "/" + this.robotName + "/cmd_vel",
-                    "geometry_msgs/Twist");
-            this.twistSubscriber.subscribe(this::twistCallback);
+            addToROS(this.robotName);
         }
     }
 
@@ -130,7 +124,7 @@ public abstract class Robot extends LivingEntity {
         ROScraft.LOGGER.info("custom name at custom " + cname);
         if (!this.level().isClientSide()) {
             ROScraft.LOGGER.info("CustomName set: '{}'", name.getString());
-            this.robotName = name.getString();
+            // this.robotName = name.getString();
             this.entityData.set(ROBOT_NAME, name.getString());
         }
     }
@@ -165,14 +159,23 @@ public abstract class Robot extends LivingEntity {
     @Override
     public void remove(RemovalReason reason) {
         super.remove(reason);
-        cleanup(true);
+        removeFromROS(true);
     }
 
     /**
      * Clean up ROS resources when entity is removed
      */
-    protected void cleanup(boolean release) {
+    protected void removeFromROS(boolean release) {
         if (this.level().isClientSide() && rosRegistered) {
+            Service opService = new Service(ros, "/roscraft/robot_factory",
+                    "roscraft_msgs/srv/FactoryReq");
+            JsonObject req = Json.createObjectBuilder()
+                    .add("operation", 1)
+                    .add("robot_name", this.robotName)
+                    .build();
+            ServiceRequest request = new ServiceRequest(req);
+            ServiceResponse response = opService.callServiceAndWait(request);
+            System.out.println(response.toString());
             if (this.twistSubscriber != null) {
                 this.twistSubscriber.unsubscribe();
             }
@@ -185,6 +188,24 @@ public abstract class Robot extends LivingEntity {
                 rosRegistered = false;
             }
         }
+    }
+
+    private void addToROS(String id) {
+        Service opService = new Service(ros, "/roscraft/robot_factory", "roscraft_msgs/srv/FactoryReq");
+        JsonObject req = Json.createObjectBuilder()
+                .add("operation", 0)
+                .add("robot_name", this.robotName)
+                .build();
+        ServiceRequest request = new ServiceRequest(req);
+        ServiceResponse response = opService.callServiceAndWait(request);
+        System.out.println(response.toString());
+        // publishers
+        this.rawPublisher = new Topic(ros, "/" + this.robotName + "/rawData",
+                "roscraft_msgs/MCRawRobotData");
+        // subscribers
+        this.twistSubscriber = new Topic(ros, "/" + this.robotName + "/cmd_vel",
+                "geometry_msgs/Twist");
+        this.twistSubscriber.subscribe(this::twistCallback);
     }
 
     @Override
