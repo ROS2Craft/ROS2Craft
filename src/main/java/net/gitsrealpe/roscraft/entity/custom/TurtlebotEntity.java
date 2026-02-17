@@ -68,7 +68,7 @@ public class TurtlebotEntity extends Robot {
             // 1. Apply angular velocity to body yaw (this is what should turn the robot)
             float yawIncrementDeg = this.w_vel * (180.0f / (float) Math.PI) / 20.0f; // rad/s → deg/tick
 
-            float currentBodyYaw = this.getYRot(); // or this.yBodyRot if you prefer
+            float currentBodyYaw = this.getYRot();
             float newBodyYaw = currentBodyYaw + yawIncrementDeg;
 
             // Wrap to [-180, 180) or [0, 360) — both work
