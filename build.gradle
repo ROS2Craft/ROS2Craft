@@ -19,6 +19,12 @@ group = mod_group_id
 
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
+
+
+    flatDir {
+            dirs 'libs'
+        }
+
 }
 
 base {
@@ -128,8 +134,24 @@ dependencies {
 
     // Example mod dependency using a file as dependency
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-    implementation 'edu.wpi.rail:jrosbridge:0.2.0'
-    additionalRuntimeClasspath 'edu.wpi.rail:jrosbridge:0.2.0'
+
+    // implementation 'edu.wpi.rail:jrosbridge:0.2.0'
+    // additionalRuntimeClasspath 'edu.wpi.rail:jrosbridge:0.2.0'
+
+    implementation files("libs/jrosbridge-0.2.2.jar")
+    additionalRuntimeClasspath files("libs/jrosbridge-0.2.2.jar")
+
+    implementation 'org.glassfish:javax.json:1.0.4'
+    additionalRuntimeClasspath 'org.glassfish:javax.json:1.0.4'
+
+    implementation 'org.glassfish.tyrus:tyrus-server:1.17'
+    additionalRuntimeClasspath 'org.glassfish.tyrus:tyrus-server:1.17'
+
+    // zeromq + protobuff to send data
+    // implementation 'com.google.protobuf:protobuf-java:4.32.0'
+    // additionalRuntimeClasspath 'com.google.protobuf:protobuf-java:4.32.0'
+    // implementation 'org.zeromq:jeromq:0.6.0'
+    // additionalRuntimeClasspath 'org.zeromq:jeromq:0.6.0'
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
