@@ -17,6 +17,11 @@ public class ModBlockEntities {
             "pedestal_be",
             () -> BlockEntityType.Builder.of(PedestalBlockEntity::new, ModBlocks.PEDESTAL.get()).build(null));
 
+    public static final Supplier<BlockEntityType<ROS2LinkBlockEntity>> ROS2LINK_BE = BLOCK_ENTITIES.register(
+            "ros2link_be",
+            () -> BlockEntityType.Builder.of(ROS2LinkBlockEntity::new, ModBlocks.ROS2LINK_BLOCK.get())
+                    .build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

@@ -15,12 +15,14 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.gitsrealpe.roscraft.block.ModBlocks;
 import net.gitsrealpe.roscraft.block.entity.ModBlockEntities;
 import net.gitsrealpe.roscraft.block.entity.renderer.PedestalBlockEntityRenderer;
+import net.gitsrealpe.roscraft.block.entity.renderer.ROS2LinkBlockEntityRenderer;
 import net.gitsrealpe.roscraft.entity.ModEntities;
 import net.gitsrealpe.roscraft.entity.client.TurtlebotRenderer;
 import net.gitsrealpe.roscraft.item.ModCreativeModeTabs;
 import net.gitsrealpe.roscraft.item.ModItems;
 import net.gitsrealpe.roscraft.screen.ModMenuTypes;
 import net.gitsrealpe.roscraft.screen.custom.PedestalScreen;
+import net.gitsrealpe.roscraft.screen.custom.ROS2LinkScreen;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -100,11 +102,13 @@ public class ROScraft {
         @SubscribeEvent
         public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(ModBlockEntities.PEDESTAL_BE.get(), PedestalBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.ROS2LINK_BE.get(), ROS2LinkBlockEntityRenderer::new);
         }
 
         @SubscribeEvent
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(ModMenuTypes.PEDESTAL_MENU.get(), PedestalScreen::new);
+            event.register(ModMenuTypes.ROS2LINK_MENU.get(), ROS2LinkScreen::new);
         }
 
     }
