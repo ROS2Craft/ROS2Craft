@@ -39,7 +39,16 @@ public abstract class Robot extends LivingEntity {
         super(entityType, level);
         // constructor -> initializa data with default values, see livingentity
         // superclass
-        this.robotName = "robot";
+        // this.robotName = "robot";
+        String cname = this.hasCustomName() ? this.getCustomName().getString() : "no cname";
+        ROScraft.LOGGER.info("custom name at constructor " + cname);
+        if (!level.isClientSide()) {
+            if (!this.hasCustomName()) {
+                ROScraft.LOGGER.info("setting cname by id ");
+                this.setCustomName(Component.literal("robot" + getId()));
+            }
+            // ROScraft.LOGGER.info("name at constructor " + this.robotName);
+        }
         if (level.isClientSide()) {
             ROScraft.LOGGER.info("name at constructor " + this.robotName);
             lidar = new Lidar(this, 3, 3.1416f, 12.8f);
@@ -52,11 +61,21 @@ public abstract class Robot extends LivingEntity {
     @Override
     public void onAddedToLevel() {
         super.onAddedToLevel();
+        // ROScraft.LOGGER.info("name at addded " + this.robotName);
+        String cname = this.hasCustomName() ? this.getCustomName().getString() : "no cname";
+        ROScraft.LOGGER.info("custom name at added " + cname);
 
-        if (!level().isClientSide() && this.robotName.equals("robot")) {
-            this.robotName = "robot" + getId();
-            entityData.set(ROBOT_NAME, this.robotName);
+        if (!this.hasCustomName()) {
+            ROScraft.LOGGER.info("no custom name set " + this.getName().getString());
         }
+        // assign name for first time if default was set
+        // if (!level().isClientSide() && this.robotName.equals("robot")) {
+        // ROScraft.LOGGER.info("name at addded1 " + this.robotName);
+        // this.robotName = "robot" + getId();
+        // ROScraft.LOGGER.info("name at addded2 " + this.robotName);
+        // entityData.set(ROBOT_NAME, this.robotName);
+        // ROScraft.LOGGER.info("name at addded3 " + this.robotName);
+        // }
         if (level().isClientSide()) {
             ros = ROSManager.getInstance().getRosConnection();
             rosRegistered = true;
@@ -67,7 +86,7 @@ public abstract class Robot extends LivingEntity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         // initialize with default value
-        builder.define(ROBOT_NAME, "robotDefault");
+        builder.define(ROBOT_NAME, "robot");
     }
 
     // once data like name has synced, create/rename topics
@@ -75,8 +94,20 @@ public abstract class Robot extends LivingEntity {
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
 
+        // ROScraft.LOGGER.info(key.toString());
+        // ROScraft.LOGGER.info(this.entityData.get(key).getClass().getName());
+        // ROScraft.LOGGER.info(this.entityData.get(key).toString());
+        // new Exception("SyncedData Debug").printStackTrace();
         if (this.level().isClientSide() && ROBOT_NAME.equals(key)) {
-            ROScraft.LOGGER.info("syncd name data");
+            ROScraft.LOGGER.info("my accesor ");
+            ROScraft.LOGGER.info("old name " + this.robotName);
+            if (this.robotName != null) {
+                removeFromROS(false);
+            }
+            // this.setCustomName(Component.literal(this.robotName));
+            // ROScraft.LOGGER.info(this.robotName);
+            // // removeFromROS(false);
+            ROScraft.LOGGER.info("synced name data " + this.entityData.get(ROBOT_NAME));
             this.robotName = this.entityData.get(ROBOT_NAME);
             this.setCustomName(Component.literal(this.robotName));
             ROScraft.LOGGER.info(this.robotName);
@@ -94,6 +125,9 @@ public abstract class Robot extends LivingEntity {
     @Override
     public void setCustomName(Component name) {
         super.setCustomName(name);
+        // ROScraft.LOGGER.info("name at custom " + this.robotName);
+        String cname = this.hasCustomName() ? this.getCustomName().getString() : "no cname";
+        ROScraft.LOGGER.info("custom name at custom " + cname);
         if (!this.level().isClientSide()) {
             ROScraft.LOGGER.info("CustomName set: '{}'", name.getString());
             this.robotName = name.getString();
@@ -156,16 +190,16 @@ public abstract class Robot extends LivingEntity {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putString("RobotName", this.robotName);
+        tag.putString("RobotName", this.getCustomName().getString());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (tag.contains("RobotName")) {
-            this.robotName = tag.getString("RobotName");
-            this.entityData.set(ROBOT_NAME, this.robotName);
-            ROScraft.LOGGER.info("read tag " + this.robotName);
+            // this.robotName = tag.getString("RobotName");
+            ROScraft.LOGGER.info("read tag " + tag.getString("RobotName"));
+            this.entityData.set(ROBOT_NAME, tag.getString("RobotName"));
         }
     }
 
