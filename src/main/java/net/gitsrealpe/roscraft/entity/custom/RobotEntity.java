@@ -25,9 +25,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public abstract class Robot extends LivingEntity {
+public abstract class RobotEntity extends LivingEntity {
     private static final EntityDataAccessor<String> ROBOT_NAME = SynchedEntityData
-            .defineId(Robot.class, EntityDataSerializers.STRING);
+            .defineId(RobotEntity.class, EntityDataSerializers.STRING);
 
     public String robotName;
     public Topic twistSubscriber;
@@ -38,7 +38,7 @@ public abstract class Robot extends LivingEntity {
 
     Lidar lidar;
 
-    protected Robot(EntityType<? extends LivingEntity> entityType, Level level) {
+    protected RobotEntity(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
         // constructor -> initializa data with default values, see livingentity
         // superclass

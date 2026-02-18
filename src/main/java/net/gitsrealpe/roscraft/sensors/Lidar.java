@@ -2,7 +2,7 @@ package net.gitsrealpe.roscraft.sensors;
 
 import java.util.Arrays;
 
-import net.gitsrealpe.roscraft.entity.custom.Robot;
+import net.gitsrealpe.roscraft.entity.custom.RobotEntity;
 // import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -14,7 +14,7 @@ public class Lidar {
 
     private int rays;
     private float[] depthGrid;
-    private Robot robot;
+    private RobotEntity robot;
     private float fov, angleStep;
     private float maxDistance;
 
@@ -26,7 +26,7 @@ public class Lidar {
      * @param fov         field of view
      * @param maxDistance maximum detection distance.
      */
-    public Lidar(Robot robot, int rays, float fov, float maxDistance) {
+    public Lidar(RobotEntity robot, int rays, float fov, float maxDistance) {
         this.fov = fov;
         this.rays = rays;
         this.robot = robot;
@@ -35,7 +35,7 @@ public class Lidar {
         this.angleStep = fov / (rays - 1);
     }
 
-    public void captureDepth(Robot entity) {
+    public void captureDepth(RobotEntity entity) {
         Level level = entity.level();
         Vec3 eyePos = entity.getEyePosition(1.0f);
         float yaw = (float) Math.toRadians(entity.getYRot());
@@ -52,7 +52,7 @@ public class Lidar {
                     : (float) eyePos.distanceTo(hit.getLocation());
             depthGrid[r] = distance;
         }
-        System.out.println(Arrays.toString(depthGrid));
+        // System.out.println(Arrays.toString(depthGrid));
         // TODO: sensors should have their own publisher/services
     }
 }
