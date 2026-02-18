@@ -1,10 +1,9 @@
-package net.gitsrealpe.roscraft.item;
+package net.gitsrealpe.roscraft.item.custom;
 
 import java.util.function.Consumer;
 
 import net.gitsrealpe.roscraft.entity.ModEntities;
 import net.gitsrealpe.roscraft.entity.custom.TurtlebotEntity;
-import net.gitsrealpe.roscraft.item.custom.RobotItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
