@@ -3,6 +3,7 @@ package net.gitsrealpe.roscraft.screen;
 import net.gitsrealpe.roscraft.ROScraft;
 import net.gitsrealpe.roscraft.screen.custom.PedestalMenu;
 import net.gitsrealpe.roscraft.screen.custom.ROS2LinkMenu;
+import net.gitsrealpe.roscraft.screen.custom.RobotMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -20,6 +21,9 @@ public class ModMenuTypes {
 
     public static final DeferredHolder<MenuType<?>, MenuType<ROS2LinkMenu>> ROS2LINK_MENU = registerMenuType(
             "ros2link_menu", ROS2LinkMenu::new);
+
+    public static final DeferredHolder<MenuType<?>, MenuType<RobotMenu>> ROBOT_MENU = registerMenuType(
+            "robot_menu", RobotMenu::new);
 
     private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> registerMenuType(
             String name,

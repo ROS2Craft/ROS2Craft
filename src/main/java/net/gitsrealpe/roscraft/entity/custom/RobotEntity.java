@@ -1,5 +1,6 @@
 package net.gitsrealpe.roscraft.entity.custom;
 
+import javax.annotation.Nullable;
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -11,6 +12,7 @@ import edu.wpi.rail.jrosbridge.services.ServiceRequest;
 import edu.wpi.rail.jrosbridge.services.ServiceResponse;
 import net.gitsrealpe.roscraft.ROScraft;
 import net.gitsrealpe.roscraft.ros.ROSManager;
+import net.gitsrealpe.roscraft.screen.custom.RobotMenu;
 import net.gitsrealpe.roscraft.sensors.Lidar;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -18,17 +20,25 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
-public abstract class RobotEntity extends LivingEntity {
+public abstract class RobotEntity extends Mob implements MenuProvider {
     private static final EntityDataAccessor<String> ROBOT_NAME = SynchedEntityData
             .defineId(RobotEntity.class, EntityDataSerializers.STRING);
-
+    public final ItemStackHandler inventory = new ItemStackHandler(3);
     public String robotName;
     public Topic twistSubscriber;
     public Topic rawPublisher;
@@ -38,9 +48,9 @@ public abstract class RobotEntity extends LivingEntity {
 
     Lidar lidar;
 
-    protected RobotEntity(EntityType<? extends LivingEntity> entityType, Level level) {
+    protected RobotEntity(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
-        // constructor -> initializa data with default values, see livingentity
+        // constructor -> initializa data with default values, see mob
         // superclass
         // this.robotName = "robot";
         String cname = this.hasCustomName() ? this.getCustomName().getString() : "no cname";
@@ -212,6 +222,7 @@ public abstract class RobotEntity extends LivingEntity {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putString("RobotName", this.getCustomName().getString());
+        tag.put("Inventory", inventory.serializeNBT(this.registryAccess()));
     }
 
     @Override
@@ -222,6 +233,24 @@ public abstract class RobotEntity extends LivingEntity {
             ROScraft.LOGGER.info("read tag " + tag.getString("RobotName"));
             this.entityData.set(ROBOT_NAME, tag.getString("RobotName"));
         }
+        if (tag.contains("Inventory", net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+            inventory.deserializeNBT(this.registryAccess(), tag.getCompound("Inventory"));
+        }
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!this.level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.openMenu(this, buf -> {
+                buf.writeVarInt(this.getId());
+            });
+        }
+        return InteractionResult.sidedSuccess(this.level().isClientSide());
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInv, Player player) {
+        return new RobotMenu(containerId, playerInv, this.getId());
+
     }
 
     @Override

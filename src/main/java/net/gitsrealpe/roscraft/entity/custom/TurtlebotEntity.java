@@ -39,7 +39,8 @@ public class TurtlebotEntity extends RobotEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 6.0D) // 3 hearts
-                .add(Attributes.ARMOR, 0.0D); // each point half chestplate
+                .add(Attributes.ARMOR, 0.0D) // each point half chestplate
+                .add(Attributes.FOLLOW_RANGE, 0D);
     }
 
     // callback assigned only in client, but variable send to server
