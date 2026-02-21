@@ -76,9 +76,10 @@ public class RobotItem extends Item {
             return InteractionResult.FAIL;
         consumer.accept(robot);
         // set the fixed frame and ownership of the robot
-
-        // stack.shrink(1);
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        robot.setFixedFrame(stack.get(ModDataComponents.COORDINATES));
+        if (context.getPlayer() != null) {
+            robot.setOwnerUUID(Optional.of(context.getPlayer().getUUID()));
+        }
         // entity placement after creation
         float rotation = (float) Mth.floor((Mth.wrapDegrees(context.getRotation()) + 22.5F) / 45.0F) * 45.0F;
         robot.moveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, rotation, 0.0F);

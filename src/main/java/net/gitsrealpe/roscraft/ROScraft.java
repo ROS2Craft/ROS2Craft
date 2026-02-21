@@ -16,6 +16,7 @@ import net.gitsrealpe.roscraft.block.ModBlocks;
 import net.gitsrealpe.roscraft.block.entity.ModBlockEntities;
 import net.gitsrealpe.roscraft.block.entity.renderer.PedestalBlockEntityRenderer;
 import net.gitsrealpe.roscraft.block.entity.renderer.ROS2LinkBlockEntityRenderer;
+import net.gitsrealpe.roscraft.component.ModDataComponents;
 import net.gitsrealpe.roscraft.entity.ModEntities;
 import net.gitsrealpe.roscraft.entity.client.TurtlebotRenderer;
 import net.gitsrealpe.roscraft.item.ModCreativeModeTabs;
@@ -60,6 +61,7 @@ public class ROScraft {
         ModBlockEntities.register(modEventBus);
         ModEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+        ModDataComponents.register(modEventBus);
 
         // Register the item to a creative tab
         // modEventBus.addListener(this::addCreative);

@@ -38,6 +38,10 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 public abstract class RobotEntity extends Mob implements MenuProvider {
     private static final EntityDataAccessor<String> ROBOT_NAME = SynchedEntityData
             .defineId(RobotEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<BlockPos> FIXED_FRAME = SynchedEntityData
+            .defineId(RobotEntity.class, EntityDataSerializers.BLOCK_POS);
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData
+            .defineId(RobotEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     public final ItemStackHandler inventory = new ItemStackHandler(3);
     public String robotName;
     public Topic twistSubscriber;
@@ -45,6 +49,9 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
     // Track if this robot instance registered with ROS manager
     private boolean rosRegistered = false;
     Ros ros;
+    public BlockPos blockPos;
+    private UUID ownerUuid = Util.NIL_UUID;
+    private boolean isOwner = false;
 
     Lidar lidar;
 
@@ -67,6 +74,15 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
             lidar = new Lidar(this, 3, 3.1416f, 12.8f);
 
         }
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        // initialize with default value
+        builder.define(ROBOT_NAME, "robot");
+        builder.define(FIXED_FRAME, new BlockPos(0, 0, 0));
+        builder.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
     }
 
     protected abstract void twistCallback(Message message);
@@ -95,34 +111,32 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
         }
     }
 
-    @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        // initialize with default value
-        builder.define(ROBOT_NAME, "robot");
-    }
-
     // once data like name has synced, create/rename topics
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
 
-        // ROScraft.LOGGER.info(key.toString());
-        // ROScraft.LOGGER.info(this.entityData.get(key).getClass().getName());
-        // ROScraft.LOGGER.info(this.entityData.get(key).toString());
-        // new Exception("SyncedData Debug").printStackTrace();
-        if (this.level().isClientSide() && ROBOT_NAME.equals(key)) {
-            ROScraft.LOGGER.info("my accesor ");
-            ROScraft.LOGGER.info("old name " + this.robotName);
-            if (this.robotName != null) {
-                removeFromROS(false);
+        if (this.level().isClientSide()) {
+            if (ROBOT_NAME.equals(key)) {
+                ROScraft.LOGGER.info("my accesor ");
+                ROScraft.LOGGER.info("old name " + this.robotName);
+                if (this.robotName != null) {
+                    // removeFromROS(false);
+                }
+                // this.setCustomName(Component.literal(this.robotName));
+                // ROScraft.LOGGER.info(this.robotName);
+                // // removeFromROS(false);
+                ROScraft.LOGGER.info("synced name data " + this.entityData.get(ROBOT_NAME));
+                this.robotName = this.entityData.get(ROBOT_NAME);
+                // addToROS(this.robotName);
+                ROScraft.LOGGER.info("client id " + this.getId());
             }
-            // this.setCustomName(Component.literal(this.robotName));
-            // ROScraft.LOGGER.info(this.robotName);
-            // // removeFromROS(false);
-            ROScraft.LOGGER.info("synced name data " + this.entityData.get(ROBOT_NAME));
-            this.robotName = this.entityData.get(ROBOT_NAME);
-            addToROS(this.robotName);
+            if (FIXED_FRAME.equals(key)) {
+                ROScraft.LOGGER.info(this.entityData.get(FIXED_FRAME).toString());
+            }
+            if (OWNER_UUID.equals(key)) {
+                // this.level().playe
+            }
         }
     }
 
@@ -222,6 +236,17 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putString("RobotName", this.getCustomName().getString());
+        BlockPos fFrame = this.entityData.get(FIXED_FRAME);
+        if (fFrame != null) {
+            CompoundTag fFrameTag = new CompoundTag();
+            fFrameTag.putInt("X", fFrame.getX());
+            fFrameTag.putInt("Y", fFrame.getY());
+            fFrameTag.putInt("Z", fFrame.getZ());
+            tag.put("FixedFrame", fFrameTag);
+        }
+        if (!ownerUuid.equals(Util.NIL_UUID)) {
+            tag.putUUID("Owner", ownerUuid);
+        }
         tag.put("Inventory", inventory.serializeNBT(this.registryAccess()));
     }
 
@@ -233,9 +258,34 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
             ROScraft.LOGGER.info("read tag " + tag.getString("RobotName"));
             this.entityData.set(ROBOT_NAME, tag.getString("RobotName"));
         }
+        if (tag.contains("FixedFrame")) {
+            CompoundTag posTag = tag.getCompound("FixedFrame");
+            this.entityData.set(FIXED_FRAME, new BlockPos(
+                    posTag.getInt("X"),
+                    posTag.getInt("Y"),
+                    posTag.getInt("Z")));
+        }
+        if (tag.contains("Owner", CompoundTag.TAG_INT_ARRAY)) {
+            ownerUuid = tag.getUUID("Owner");
+        }
         if (tag.contains("Inventory", net.minecraft.nbt.Tag.TAG_COMPOUND)) {
             inventory.deserializeNBT(this.registryAccess(), tag.getCompound("Inventory"));
         }
+    }
+
+    /**
+     * Set the fixed frame MC coordinates for this robot
+     **/
+    public void setFixedFrame(BlockPos blockPos) {
+        this.entityData.set(FIXED_FRAME, blockPos);
+    }
+
+    // Set ownership of this robot
+    public void setOwnerUUID(Optional<UUID> ownerUuid) {
+        this.entityData.set(OWNER_UUID, ownerUuid);
+        // this.ownerUuid = ownerUuid;
+    }
+
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!this.level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
