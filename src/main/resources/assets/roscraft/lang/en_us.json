@@ -6,5 +6,6 @@
     "block.roscraft.magic_block": "Magic Block",
     "block.roscraft.pedestal": "Pedestal",
     "block.roscraft.ros2link_block": "ROS2 Link",
-    "entity.roscraft.turtlebot": "Turtlebot"
+    "entity.roscraft.turtlebot": "Turtlebot",
+    "tooltip.roscraft.robot_info": "Press [§eShift§r] for Info"
 }
