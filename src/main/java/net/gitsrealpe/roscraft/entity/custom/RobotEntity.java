@@ -240,6 +240,11 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
         super.addAdditionalSaveData(tag);
         tag.putString("RobotName", this.getCustomName().getString());
         BlockPos fFrame = this.entityData.get(FIXED_FRAME);
+        CompoundTag fFrameTag = new CompoundTag();
+        fFrameTag.putInt("X", fFrame.getX());
+        fFrameTag.putInt("Y", fFrame.getY());
+        fFrameTag.putInt("Z", fFrame.getZ());
+        tag.put("FixedFrame", fFrameTag);
 
         UUID ownerUuid = this.entityData.get(OWNER_UUID).orElse(null);
         tag.putUUID("Owner", ownerUuid);

@@ -9,6 +9,7 @@ import net.gitsrealpe.roscraft.component.ModDataComponents;
 import net.gitsrealpe.roscraft.entity.custom.RobotEntity;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -47,6 +48,7 @@ public class RobotItem extends Item {
                 level.playSound(null, context.getClickedPos(), SoundEvents.NOTE_BLOCK_HARP.value(),
                         SoundSource.BLOCKS, 1.0F, 1.0F);
                 stack.set(ModDataComponents.COORDINATES, ros2LinkBE.getBlockPos());
+                stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
             }
             return InteractionResult.SUCCESS;
         }
@@ -78,7 +80,7 @@ public class RobotItem extends Item {
         // set the fixed frame and ownership of the robot
         robot.setFixedFrame(stack.get(ModDataComponents.COORDINATES));
         if (context.getPlayer() != null) {
-            robot.setOwnerUUID(Optional.of(context.getPlayer().getUUID()));
+            robot.setOwnerUUID(context.getPlayer().getUUID());
         }
         // entity placement after creation
         float rotation = (float) Mth.floor((Mth.wrapDegrees(context.getRotation()) + 22.5F) / 45.0F) * 45.0F;
