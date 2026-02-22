@@ -6,14 +6,11 @@ import net.gitsrealpe.roscraft.entity.client.TurtlebotModel;
 import net.gitsrealpe.roscraft.entity.custom.TurtlebotEntity;
 import net.gitsrealpe.roscraft.network.ServerROSPayloadHandler;
 import net.gitsrealpe.roscraft.network.TwistPacket;
-import net.gitsrealpe.roscraft.ros.ROSManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -44,14 +41,5 @@ public class ModEventBusEvents {
             });
         });
 
-    }
-
-    // Close conection when client closes world
-    @SubscribeEvent
-    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            ROSManager.getInstance().disconnect();
-
-        }
     }
 }

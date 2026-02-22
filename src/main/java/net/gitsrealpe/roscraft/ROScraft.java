@@ -21,12 +21,14 @@ import net.gitsrealpe.roscraft.entity.ModEntities;
 import net.gitsrealpe.roscraft.entity.client.TurtlebotRenderer;
 import net.gitsrealpe.roscraft.item.ModCreativeModeTabs;
 import net.gitsrealpe.roscraft.item.ModItems;
+import net.gitsrealpe.roscraft.ros.ROSManager;
 import net.gitsrealpe.roscraft.screen.ModMenuTypes;
 import net.gitsrealpe.roscraft.screen.custom.PedestalScreen;
 import net.gitsrealpe.roscraft.screen.custom.ROS2LinkScreen;
 import net.gitsrealpe.roscraft.screen.custom.RobotScreen;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -115,5 +117,10 @@ public class ROScraft {
             event.register(ModMenuTypes.ROBOT_MENU.get(), RobotScreen::new);
         }
 
+        // Close conection when client closes world
+        @SubscribeEvent
+        public static void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
+            ROSManager.getInstance().reset();
+        }
     }
 }

@@ -36,7 +36,6 @@ public class ROSManager {
         if (ros == null) {
             ros = new Ros("localhost");
         }
-
         if (!connected) {
             try {
                 ros.connect();
@@ -90,5 +89,11 @@ public class ROSManager {
      */
     public int getActiveRobotCount() {
         return activeRobots;
+    }
+
+    public void reset() {
+        ROScraft.LOGGER.info("logged out, resetting ROSManager");
+        activeRobots = 0;
+        disconnect();
     }
 }
