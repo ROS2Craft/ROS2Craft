@@ -1,9 +1,12 @@
 package net.gitsrealpe.roscraft.screen.custom;
 
+import java.util.UUID;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.gitsrealpe.roscraft.ROScraft;
 import net.gitsrealpe.roscraft.entity.custom.RobotEntity;
+import net.minecraft.Util;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -18,6 +21,7 @@ public class RobotScreen extends AbstractContainerScreen<RobotMenu> {
             "textures/gui/pedestal/pedestal_gui.png");
 
     private RobotEntity entity;
+    private String ownerName;
 
     public RobotScreen(RobotMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -28,6 +32,13 @@ public class RobotScreen extends AbstractContainerScreen<RobotMenu> {
         super.init();
         if (this.menu.entityId != 0 && minecraft.level != null) {
             this.entity = (RobotEntity) minecraft.level.getEntity(this.menu.entityId);
+
+            UUID ownerUuid = this.entity.getOwnerUUID();
+            if (ownerUuid != Util.NIL_UUID) {
+                this.ownerName = this.entity.getOwnerName();
+            } else {
+                this.ownerName = "Robot has no owner";
+            }
         }
     }
 
@@ -41,6 +52,7 @@ public class RobotScreen extends AbstractContainerScreen<RobotMenu> {
         int y = (height - imageHeight) / 2;
 
         guiGraphics.blit(GUI_TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        guiGraphics.drawString(this.font, ownerName, this.leftPos + 8, this.topPos + 21, 0xFFFFFF);
 
         float health = this.entity.getHealth();
         int fullHearts = Mth.ceil(health / 2.0F);

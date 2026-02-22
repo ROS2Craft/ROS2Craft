@@ -42,6 +42,8 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
             .defineId(RobotEntity.class, EntityDataSerializers.BLOCK_POS);
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData
             .defineId(RobotEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<String> OWNER_NAME = SynchedEntityData
+            .defineId(RobotEntity.class, EntityDataSerializers.STRING);
     public final ItemStackHandler inventory = new ItemStackHandler(3);
     public String robotName;
     public Topic twistSubscriber;
@@ -50,8 +52,8 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
     private boolean rosRegistered = false;
     Ros ros;
     public BlockPos blockPos;
-    private UUID ownerUuid = Util.NIL_UUID;
     private boolean isOwner = false;
+    private String ownerName = "NoOwner";
 
     Lidar lidar;
 
@@ -83,6 +85,7 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
         builder.define(ROBOT_NAME, "robot");
         builder.define(FIXED_FRAME, new BlockPos(0, 0, 0));
         builder.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
+        builder.define(OWNER_NAME, "noOwner");
     }
 
     protected abstract void twistCallback(Message message);
@@ -237,16 +240,10 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
         super.addAdditionalSaveData(tag);
         tag.putString("RobotName", this.getCustomName().getString());
         BlockPos fFrame = this.entityData.get(FIXED_FRAME);
-        if (fFrame != null) {
-            CompoundTag fFrameTag = new CompoundTag();
-            fFrameTag.putInt("X", fFrame.getX());
-            fFrameTag.putInt("Y", fFrame.getY());
-            fFrameTag.putInt("Z", fFrame.getZ());
-            tag.put("FixedFrame", fFrameTag);
-        }
-        if (!ownerUuid.equals(Util.NIL_UUID)) {
-            tag.putUUID("Owner", ownerUuid);
-        }
+
+        UUID ownerUuid = this.entityData.get(OWNER_UUID).orElse(null);
+        tag.putUUID("Owner", ownerUuid);
+        tag.putString("OwnerName", this.entityData.get(OWNER_NAME));
         tag.put("Inventory", inventory.serializeNBT(this.registryAccess()));
     }
 
@@ -266,7 +263,10 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
                     posTag.getInt("Z")));
         }
         if (tag.contains("Owner", CompoundTag.TAG_INT_ARRAY)) {
-            ownerUuid = tag.getUUID("Owner");
+            this.entityData.set(OWNER_UUID, Optional.of(tag.getUUID("Owner")));
+        }
+        if (tag.contains("OwnerName")) {
+            this.entityData.set(OWNER_NAME, tag.getString("OwnerName"));
         }
         if (tag.contains("Inventory", net.minecraft.nbt.Tag.TAG_COMPOUND)) {
             inventory.deserializeNBT(this.registryAccess(), tag.getCompound("Inventory"));
@@ -280,10 +280,25 @@ public abstract class RobotEntity extends Mob implements MenuProvider {
         this.entityData.set(FIXED_FRAME, blockPos);
     }
 
-    // Set ownership of this robot
-    public void setOwnerUUID(Optional<UUID> ownerUuid) {
-        this.entityData.set(OWNER_UUID, ownerUuid);
-        // this.ownerUuid = ownerUuid;
+    // Set ownership of this robot when spawning
+    public void setOwnerUUID(UUID ownerUuid) {
+        ROScraft.LOGGER.info("setting owner uuid");
+        this.entityData.set(OWNER_UUID, Optional.of(ownerUuid));
+        this.entityData.set(OWNER_NAME, this.level().getPlayerByUUID(ownerUuid).getName().getString());
+    }
+
+    public UUID getOwnerUUID() {
+        return this.entityData.get(OWNER_UUID).orElse(null);
+    }
+
+    public String getOwnerName() {
+        return this.entityData.get(OWNER_NAME);
+    }
+
+    private boolean isOwner(LocalPlayer player) {
+        UUID owner = getOwnerUUID();
+        ROScraft.LOGGER.info("The owner " + this.level().getPlayerByUUID(owner));
+        return owner != null && owner.equals(player.getUUID());
     }
 
     @Override
