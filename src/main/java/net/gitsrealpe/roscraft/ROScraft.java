@@ -26,6 +26,7 @@ import net.gitsrealpe.roscraft.screen.ModMenuTypes;
 import net.gitsrealpe.roscraft.screen.custom.PedestalScreen;
 import net.gitsrealpe.roscraft.screen.custom.ROS2LinkScreen;
 import net.gitsrealpe.roscraft.screen.custom.RobotScreen;
+import net.gitsrealpe.roscraft.sound.ModSounds;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -64,6 +65,7 @@ public class ROScraft {
         ModEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModDataComponents.register(modEventBus);
+        ModSounds.register(modEventBus);
 
         // Register the item to a creative tab
         // modEventBus.addListener(this::addCreative);

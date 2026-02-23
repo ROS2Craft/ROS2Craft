@@ -7,5 +7,6 @@
     "block.roscraft.pedestal": "Pedestal",
     "block.roscraft.ros2link_block": "ROS2 Link",
     "entity.roscraft.turtlebot": "Turtlebot",
-    "tooltip.roscraft.robot_info": "Press [§eShift§r] for Info"
+    "tooltip.roscraft.robot_info": "Press [§eShift§r] for Info",
+    "sounds.roscraft.turtlebot_ambient": "Turtlebot beeps"
 }

@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 import edu.wpi.rail.jrosbridge.messages.Message;
 import net.gitsrealpe.roscraft.ROScraft;
 import net.gitsrealpe.roscraft.network.TwistPacket;
+import net.gitsrealpe.roscraft.sound.ModSounds;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -25,9 +26,14 @@ public class TurtlebotEntity extends RobotEntity {
     // server vars
     float x_vel = 0;
     float w_vel = 0;
+    int cnt = 0;
 
     public TurtlebotEntity(EntityType<? extends TurtlebotEntity> entityType, Level level) {
         super(entityType, level);
+
+        this.x_vel = 0;
+        this.w_vel = 0;
+        this.cnt = 0;
 
         if (!level.isClientSide()) {
             // this.entityData.set(NAME, generateDefaultDisplayId());
@@ -106,7 +112,6 @@ public class TurtlebotEntity extends RobotEntity {
         super.die(damageSource);
         this.x_vel = 0.0f;
         this.w_vel = 0.0f;
-        this.removeFromROS(true);
     }
 
     @Override
@@ -119,4 +124,14 @@ public class TurtlebotEntity extends RobotEntity {
         return SoundEvents.CREEPER_DEATH;
     }
 
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return ModSounds.TURTLEBOT_AMBIENT.get();
+        // return SoundEvents.COW_AMBIENT;
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return 600;
+    }
 }
