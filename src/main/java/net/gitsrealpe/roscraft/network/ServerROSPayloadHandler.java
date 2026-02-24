@@ -26,12 +26,9 @@ public class ServerROSPayloadHandler {
             return;
         }
 
-        // Entity someEntity = level.getEntity(payload.robotId());
-        // if (someEntity instanceof TurtlebotEntity turtlebot &&
-        // !turtlebot.isRemoved()) {
-        // turtlebot.setTwist(payload.twist_linear());
-        // }
-        list.getFirst().setTwist(payload);
-
+        Entity someEntity = level.getEntity(payload.robotId());
+        if (someEntity instanceof TurtlebotEntity turtlebot && !turtlebot.isRemoved()) {
+            turtlebot.setTwist(payload);
+        }
     }
 }
