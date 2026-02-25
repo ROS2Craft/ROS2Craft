@@ -150,8 +150,8 @@ public class ROSManager {
         ROS2Craft.LOGGER.info("Active robots: {}", activeRobots);
 
         if (activeRobots <= 0) {
+            notifyDisconnected();
             if (ros != null && ros.isConnected()) {
-                notifyDisconnected();
                 disconnect();
             }
             stopReconnectScheduler();
@@ -164,7 +164,6 @@ public class ROSManager {
      */
     public synchronized void disconnect() {
         if (ros != null && ros.isConnected()) {
-            notifyDisconnected();
             ros.disconnect();
             ROS2Craft.LOGGER.info("ROS connection closed");
         }
@@ -182,6 +181,7 @@ public class ROSManager {
         ROS2Craft.LOGGER.info("logged out, resetting ROSManager");
         stopReconnectScheduler();
         activeRobots = 0;
+        notifyDisconnected();
         disconnect();
         ros = null;
         listeners.clear();
