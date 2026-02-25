@@ -224,40 +224,21 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
      * Clean up ROS resources when entity is removed
      */
     protected void removeFromROS() {
-        // Service opService = new Service(ros, "/ros2craft/robot_factory",
-        // "ros2craft_interfaces/srv/FactoryReq");
-        // JsonObject req = Json.createObjectBuilder()
-        // .add("operation", 1)
-        // .add("robot_name", this.getCustomName().getString())
-        // .build();
-        // String srv_name = "/ros2craft/robot_factory";
-        // JsonObject call = Json.createObjectBuilder()
-        // .add("op", "call_service")
-        // .add("id", "call_service:" + srv_name + ":" + this.ros.nextId())
-        // .add("type", "ros2craft_interfaces/srv/FactoryReq")
-        // .add("service", srv_name)
-        // .add("args", req)
-        // .build();
-        // this.ros.send(call);
-        // ServiceRequest request = new ServiceRequest(req);
-        // ServiceResponse response = opService.callServiceAndWait(request);
-        // System.out.println(response.toString());
-
-        Service opService = new Service(ros,
-                "/ComponentManager/_container/unload_node",
-                "composition_interfaces/srv/LoadNode");
-        JsonObject req = Json.createObjectBuilder()
-                .add("unique_id", this.node_id)
-                .build();
-        ServiceRequest request = new ServiceRequest(req);
-        ServiceResponse response = opService.callServiceAndWait(request);
-        System.out.println(response.toString());
-
-        // if (this.twistSubscriber != null)
-        this.twistSubscriber.unsubscribe();
-        // if (this.rawPublisher != null)
-        this.rawPublisher.unadvertise();
-
+        if (rosConnected) {
+            Service opService = new Service(ros,
+                    "/ComponentManager/_container/unload_node",
+                    "composition_interfaces/srv/LoadNode");
+            JsonObject req = Json.createObjectBuilder()
+                    .add("unique_id", this.node_id)
+                    .build();
+            ServiceRequest request = new ServiceRequest(req);
+            ServiceResponse response = opService.callServiceAndWait(request);
+            System.out.println(response.toString());
+        }
+        if (this.twistSubscriber != null)
+            this.twistSubscriber.unsubscribe();
+        if (this.rawPublisher != null)
+            this.rawPublisher.unadvertise();
         ROSManager.getInstance().removeConnectionListener(this);
     }
 
