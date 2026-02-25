@@ -1,0 +1,10 @@
+{
+    "turtlebot_ambient": {
+        "subtitle": "sounds.ros2craft.turtlebot_ambient",
+        "sounds": [
+            "ros2craft:turtlebot_ambient1",
+            "ros2craft:turtlebot_ambient2",
+            "ros2craft:turtlebot_ambient3"
+        ]
+    }
+}

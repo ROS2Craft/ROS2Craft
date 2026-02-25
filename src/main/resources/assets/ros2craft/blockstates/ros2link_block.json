@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "ros2craft:block/ros2link_block"
+        }
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "ros2craft:block/pedestal"
+        }
+    }
+}

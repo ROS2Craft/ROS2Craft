@@ -1,0 +1,12 @@
+{
+    "creativetab.ros2craft.ros2craft_items": "ROS2Craft Items",
+    "item.ros2craft.bismuth": "Bismuth",
+    "item.ros2craft.turtlebot": "Turtlebot",
+    "block.ros2craft.bismuth_block": "Bismuth Block",
+    "block.ros2craft.magic_block": "Magic Block",
+    "block.ros2craft.pedestal": "Pedestal",
+    "block.ros2craft.ros2link_block": "ROS2 Link",
+    "entity.ros2craft.turtlebot": "Turtlebot",
+    "tooltip.ros2craft.robot_info": "Press [§eShift§r] for Info",
+    "sounds.ros2craft.turtlebot_ambient": "Turtlebot beeps"
+}
