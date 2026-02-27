@@ -62,8 +62,8 @@ public class TurtlebotEntity extends RobotEntity {
 
     // this method is only executed in server, by payload C->S received
     public void setTwist(TwistPacket packet) {
-        this.x_vel = packet.twist_linear().x;
-        this.w_vel = packet.twist_angular().z;
+        this.x_vel = packet.twist_linear().x / 20.0f;
+        this.w_vel = packet.twist_angular().z * Mth.RAD_TO_DEG / 20.0f;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class TurtlebotEntity extends RobotEntity {
         if (!this.level().isClientSide() && this.isAlive()) {
 
             // 1. Apply angular velocity to body yaw (this is what should turn the robot)
-            float yawIncrementDeg = this.w_vel * (180.0f / (float) Math.PI) / 20.0f; // rad/s → deg/tick
+            float yawIncrementDeg = this.w_vel;
 
             float currentBodyYaw = this.getYRot();
             float newBodyYaw = currentBodyYaw + yawIncrementDeg;
