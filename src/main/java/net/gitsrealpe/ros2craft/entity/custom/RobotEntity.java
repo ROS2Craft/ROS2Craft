@@ -88,7 +88,7 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
         if (level.isClientSide()) {
             ROS2Craft.LOGGER.info("name at constructor " + this.robotName);
 
-            lidar = new Lidar(this, 3, 3.1416f, 12.8f);
+            lidar = new Lidar(this, 180, 3.1416f, 10f);
 
         }
     }
@@ -191,8 +191,7 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
             // ROS2Craft.LOGGER.info("yes mi owner");
             if (rosConnected) {
                 publishRawData();
-
-                // this.lidar.captureDepth(this);
+                this.lidar.captureDepth(this);
             }
         }
     }
@@ -239,6 +238,8 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
             this.twistSubscriber.unsubscribe();
         if (this.rawPublisher != null)
             this.rawPublisher.unadvertise();
+
+        this.lidar.clearPublisher();
         ROSManager.getInstance().removeConnectionListener(this);
     }
 
@@ -261,6 +262,8 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
         this.twistSubscriber = new Topic(ros, "/" + id + "/cmd_vel",
                 "geometry_msgs/Twist");
         this.twistSubscriber.subscribe(this::twistCallback);
+        // sensors
+        this.lidar.setPublisher(new Topic(ros, "/" + id + "/lidar", "sensor_msgs/LaserScan"));
     }
 
     @Override
