@@ -28,7 +28,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -37,14 +36,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
@@ -108,20 +104,6 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
         super.onSyncedDataUpdated(key);
 
         if (this.level().isClientSide()) {
-            // if (ROBOT_NAME.equals(key)) {
-            // ROS2Craft.LOGGER.info("my accesor ");
-            // ROS2Craft.LOGGER.info("old name " + this.robotName);
-            // if (this.robotName != null) {
-            // // removeFromROS(false);
-            // }
-            // // this.setCustomName(Component.literal(this.robotName));
-            // // ROS2Craft.LOGGER.info(this.robotName);
-            // // // removeFromROS(false);
-            // ROS2Craft.LOGGER.info("synced name data " + this.entityData.get(ROBOT_NAME));
-            // this.robotName = this.entityData.get(ROBOT_NAME);
-            // // addToROS(this.robotName);
-            // ROS2Craft.LOGGER.info("client id " + this.getId());
-            // }
             if (FIXED_FRAME.equals(key)) {
                 ROS2Craft.LOGGER.info(this.entityData.get(FIXED_FRAME).toString());
             }
@@ -157,14 +139,7 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
         if (!this.hasCustomName()) {
             ROS2Craft.LOGGER.info("no custom name set " + this.getName().getString());
         }
-        // assign name for first time if default was set
-        // if (!level().isClientSide() && this.robotName.equals("robot")) {
-        // ROS2Craft.LOGGER.info("name at addded1 " + this.robotName);
-        // this.robotName = "robot" + getId();
-        // ROS2Craft.LOGGER.info("name at addded2 " + this.robotName);
-        // entityData.set(ROBOT_NAME, this.robotName);
-        // ROS2Craft.LOGGER.info("name at addded3 " + this.robotName);
-        // }
+
         if (level().isClientSide()) {
 
         }
@@ -178,8 +153,6 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
         ROS2Craft.LOGGER.info("custom name at custom " + cname);
         if (!this.level().isClientSide()) {
             ROS2Craft.LOGGER.info("CustomName set: '{}'", name.getString());
-            // this.robotName = name.getString();
-            // this.entityData.set(ROBOT_NAME, name.getString());
         }
     }
 

@@ -51,7 +51,6 @@ public class TurtlebotEntity extends RobotEntity {
 
     // callback assigned only in client, but variable send to server
     protected void twistCallback(Message message) {
-        ROS2Craft.LOGGER.info("From ROS: " + message.toString());
         JsonObject data = message.toJsonObject();
         JsonObject linear = data.getJsonObject("linear");
         Vector3f linear_vel = new Vector3f((float) linear.getJsonNumber("x").doubleValue(), 0.0f, 0.0f);
