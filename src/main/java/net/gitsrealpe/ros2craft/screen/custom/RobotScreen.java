@@ -10,6 +10,7 @@ import net.minecraft.Util;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +19,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class RobotScreen extends AbstractContainerScreen<RobotMenu> {
     private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(ROS2Craft.MODID,
-            "textures/gui/pedestal/pedestal_gui.png");
+            "textures/gui/robot/robot_gui.png");
 
     private RobotEntity entity;
     private String ownerName;
@@ -54,6 +55,14 @@ public class RobotScreen extends AbstractContainerScreen<RobotMenu> {
         guiGraphics.blit(GUI_TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
         guiGraphics.drawString(this.font, ownerName, this.leftPos + 8, this.topPos + 21, 0xFFFFFF);
 
+        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,
+                this.leftPos + 7, this.topPos + 17, this.leftPos + 65, this.topPos + 70,
+                35, 0.0F, mouseX, mouseY + 50, this.entity);
+
+        drawHealt(guiGraphics);
+    }
+
+    private void drawHealt(GuiGraphics guiGraphics) {
         float health = this.entity.getHealth();
         int fullHearts = Mth.ceil(health / 2.0F);
         boolean hasHalfHeart = (health % 2.0F) > 0.0F;
