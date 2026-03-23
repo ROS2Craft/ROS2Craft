@@ -1,25 +1,29 @@
 
-Installation information
-=======
+# ROS2Craft: Advanced Robotics in Minecraft!
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+This dev branch uses [rctoris:jrosbridge](https://github.com/rctoris/jrosbridge) as Java-ROS2 interface, based on the rosbridge_suite using websockets.
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+Obtained as local .jar lib using:
+```
+dependencies {
+  implementation files("libs/jrosbridge-0.2.2.jar")
+}
+```
+Loaded locally becuase original version was not performing topic unadvertise call properly. The difference is as follows;
+```
+public void unadvertise() {
+    // build and send the rosbridge call
+    // String unadvertiseId = "unadvertise:" + this.name + ":"
+    // + this.ros.nextId();
+    JsonObject call = Json.createObjectBuilder()
+            .add(JRosbridge.FIELD_OP, JRosbridge.OP_CODE_UNADVERTISE)
+            // .add(JRosbridge.FIELD_ID, unadvertiseId)
+            .add(JRosbridge.FIELD_TOPIC, this.name).build();
+    this.ros.send(call);
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+    // set the flag indicating we are no longer registered
+    this.isAdvertised = false;
+	}
+```
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
-
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+The call had a different id, by removing it should be enough to unadvertise as expected.
