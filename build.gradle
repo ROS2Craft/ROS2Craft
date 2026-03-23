@@ -18,9 +18,7 @@ group = mod_group_id
 
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
-    flatDir {
-            dirs 'libs'
-        }
+    mavenLocal()
 }
 
 base {
@@ -115,6 +113,21 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+configurations.all{
+    resolutionStrategy {
+        force 'org.apache.logging.log4j:log4j-api:2.22.1'
+        force 'org.apache.logging.log4j:log4j-core:2.22.1'
+        force 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.1'
+
+        // Explicitly exclude the conflicting newer binding wherever it comes from
+        dependencySubstitution {
+            substitute(module("org.apache.logging.log4j:log4j-slf4j2-impl"))
+                .using(module("org.apache.logging.log4j:log4j-slf4j-impl:2.22.1"))
+                .because("Avoid duplicate SLF4J binding modules in JPMS")
+        }
+    }
+}
+
 dependencies {
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -143,11 +156,24 @@ dependencies {
     implementation 'org.glassfish.tyrus:tyrus-server:1.17'
     additionalRuntimeClasspath 'org.glassfish.tyrus:tyrus-server:1.17'
 
-    // zeromq + protobuff to send data
-    // implementation 'com.google.protobuf:protobuf-java:4.32.0'
-    // additionalRuntimeClasspath 'com.google.protobuf:protobuf-java:4.32.0'
-    // implementation 'org.zeromq:jeromq:0.6.0'
-    // additionalRuntimeClasspath 'org.zeromq:jeromq:0.6.0'
+
+    constraints {
+        implementation("org.apache.logging.log4j:log4j-api") {
+            version { strictly("2.22.1") }
+            because("Forced to match NeoForge/Minecraft 1.21.1 requirement")
+        }
+        implementation("org.apache.logging.log4j:log4j-core") {
+            version { strictly("2.22.1") }
+            because("Forced to match NeoForge/Minecraft 1.21.1 requirement")
+        }
+        implementation("org.apache.logging.log4j:log4j-slf4j-impl") {
+            version { strictly("2.22.1") }
+            because("Forced to match NeoForge/Minecraft 1.21.1 requirement")
+        }
+    }
+    
+    implementation 'us.ihmc:jros2:1.1.6'
+    additionalRuntimeClasspath 'us.ihmc:jros2:1.1.6'
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
@@ -178,19 +204,6 @@ sourceSets.main.resources.srcDir generateModMetadata
 // To avoid having to run "generateModMetadata" manually, make it run on every project reload
 neoForge.ideSyncTask generateModMetadata
 
-// Example configuration to allow publishing using the maven-publish plugin
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/repo"
-        }
-    }
-}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

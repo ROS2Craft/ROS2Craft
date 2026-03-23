@@ -43,6 +43,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import std_msgs.msg.dds.Int32;
+import us.ihmc.jros2.ROS2Node;
+import us.ihmc.jros2.ROS2Publisher;
+import us.ihmc.jros2.ROS2Topic;
 
 public abstract class RobotEntity extends Mob implements MenuProvider, ROSManager.ConnectionListener {
     // private static final EntityDataAccessor<String> ROBOT_NAME =
@@ -85,6 +89,14 @@ public abstract class RobotEntity extends Mob implements MenuProvider, ROSManage
             ROS2Craft.LOGGER.info("name at constructor " + this.robotName);
 
             lidar = new Lidar(this, 180, 3.1416f, 10f);
+
+            ROS2Node node = new ROS2Node("my_node", 0); // domainId is 0 by default
+            ROS2Topic<Int32> topic = new ROS2Topic<>("/chatter",
+                    Int32.class);
+            ROS2Publisher<Int32> intPublisher = node.createPublisher(topic);
+            Int32 message = new Int32();
+            message.setData(123);
+            intPublisher.publish(message);
 
         }
     }
