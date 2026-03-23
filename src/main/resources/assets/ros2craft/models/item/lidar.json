@@ -1,0 +1,83 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"texture_size": [ 64, 64 ],
+	"textures": {
+		"0": "ros2craft:item/turtlebot"
+	},
+	"elements": [
+		{
+			"from": [ 7, 0, 7 ],
+			"to": [ 9, 1, 9 ],
+			"rotation": { "angle": 0, "axis": "z", "origin": [ 8, 0.5, 8 ] },
+			"faces": {
+				"north": { "uv": [ 3, 5.5, 4, 6.75 ], "rotation": 180, "texture": "#0" },
+				"east": { "uv": [ 1, 5.5, 2, 6.75 ], "rotation": 180, "texture": "#0" },
+				"south": { "uv": [ 2, 4.5, 3, 5.5 ], "rotation": 180, "texture": "#0" },
+				"west": { "uv": [ 0, 5.5, 1, 6.75 ], "rotation": 180, "texture": "#0" },
+				"up": { "uv": [ 3, 5.5, 2, 6.75 ], "rotation": 180, "texture": "#0" },
+				"down": { "uv": [ 2, 5.5, 1, 4.5 ], "rotation": 180, "texture": "#0" }
+			}
+		},
+		{
+			"name": "Body",
+			"from": [ 2, 2, 2 ],
+			"to": [ 14, 5, 14 ],
+			"rotation": { "angle": 0, "axis": "y", "origin": [ 3, 2, 3 ] },
+			"faces": {
+				"north": { "uv": [ 5, 3.25, 8, 4 ], "texture": "#0" },
+				"east": { "uv": [ 2, 3.25, 5, 4 ], "texture": "#0" },
+				"south": { "uv": [ 11, 3.25, 14, 4 ], "texture": "#0" },
+				"west": { "uv": [ 8, 3.25, 11, 4 ], "texture": "#0" },
+				"up": { "uv": [ 8, 3.25, 5, 0.25 ], "texture": "#0" },
+				"down": { "uv": [ 11, 0.25, 8, 3.25 ], "texture": "#0" }
+			}
+		},
+		{
+			"name": "WheelR",
+			"from": [ 13, 0, 6 ],
+			"to": [ 15, 4, 10 ],
+			"rotation": { "angle": 0, "axis": "y", "origin": [ 13, -1, 6 ] },
+			"faces": {
+				"north": { "uv": [ 1.5, 1.5, 2.5, 3 ], "texture": "#0" },
+				"east": { "uv": [ 0, 1.5, 1.5, 3 ], "texture": "#0" },
+				"south": { "uv": [ 4, 1.5, 5, 3 ], "texture": "#0" },
+				"west": { "uv": [ 2.5, 1.5, 4, 3 ], "texture": "#0" },
+				"up": { "uv": [ 2.5, 1.5, 1.5, 0 ], "texture": "#0" },
+				"down": { "uv": [ 3.5, 0, 2.5, 1.5 ], "texture": "#0" }
+			}
+		},
+		{
+			"name": "WheelL",
+			"from": [ 1, 0, 6 ],
+			"to": [ 3, 4, 10 ],
+			"rotation": { "angle": 0, "axis": "y", "origin": [ 1, -1, 6 ] },
+			"faces": {
+				"north": { "uv": [ 1.5, 1.5, 2.5, 3 ], "texture": "#0" },
+				"east": { "uv": [ 0, 1.5, 1.5, 3 ], "texture": "#0" },
+				"south": { "uv": [ 4, 1.5, 5, 3 ], "texture": "#0" },
+				"west": { "uv": [ 2.5, 1.5, 4, 3 ], "texture": "#0" },
+				"up": { "uv": [ 2.5, 1.5, 1.5, 0 ], "texture": "#0" },
+				"down": { "uv": [ 3.5, 0, 2.5, 1.5 ], "texture": "#0" }
+			}
+		}
+	],
+	"display": { },
+	"groups": [
+		0,
+		{
+			"name": "Body",
+			"origin": [ 5, 2, 5 ],
+			"color": 0,
+			"children": [
+				1,
+				{
+					"name": "Wheels",
+					"origin": [ 8, 2, 8 ],
+					"color": 0,
+					"children": [ 2, 3 ]
+				}
+			]
+		}
+	]
+}

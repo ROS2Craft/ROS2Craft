@@ -11,7 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class TurtlebotRenderer extends LivingEntityRenderer<TurtlebotEntity, TurtlebotModel<TurtlebotEntity>> {
     public TurtlebotRenderer(EntityRendererProvider.Context context) {
-        super(context, new TurtlebotModel<>(context.bakeLayer(TurtlebotModel.LAYER_LOCATION)), 0.25f);
+        super(context, new TurtlebotModel<>(context.bakeLayer(TurtlebotModel.LAYER_LOCATION)), 0.8f);
+        this.addLayer(new LidarRenderLayer(this, context.getItemRenderer()));
     }
 
     @Override
